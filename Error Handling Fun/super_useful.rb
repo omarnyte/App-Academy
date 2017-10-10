@@ -1,6 +1,11 @@
 # PHASE 2
 def convert_to_int(str)
-  Integer(str)
+  begin
+    Integer(str)
+  rescue ArgumentError => error
+    puts "Sinc you didn't type a number, I'm returning nil"
+  end
+
 end
 
 # PHASE 3
@@ -9,18 +14,24 @@ FRUITS = ["apple", "banana", "orange"]
 def reaction(maybe_fruit)
   if FRUITS.include? maybe_fruit
     puts "OMG, thanks so much for the #{maybe_fruit}!"
-  else 
-    raise StandardError 
-  end 
+  elsif maybe_fruit == "coffee"
+    puts "Thanks for the coffee, but I still need fruit."
+    raise "That was not a fruit"
+  else
+    raise "That wasn't a fruit!"
+  end
 end
 
 def feed_me_a_fruit
   puts "Hello, I am a friendly monster. :)"
-
-  puts "Feed me a fruit! (Enter the name of a fruit:)"
-  maybe_fruit = gets.chomp
-  reaction(maybe_fruit) 
-end  
+  begin
+    puts "Feed me a fruit! (Enter the name of a fruit:)"
+    maybe_fruit = gets.chomp
+    reaction(maybe_fruit)
+  rescue StandardError
+    retry if maybe_fruit == "coffee"
+  end
+end
 
 # PHASE 4
 class BestFriend
@@ -39,8 +50,6 @@ class BestFriend
   end
 
   def give_friendship_bracelet
-    puts "Hey bestie, I made you a friendship bracelet. It says my name, #{@name}, so you never forget me." 
+    puts "Hey bestie, I made you a friendship bracelet. It says my name, #{@name}, so you never forget me."
   end
 end
-
-
