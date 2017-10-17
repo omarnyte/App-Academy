@@ -61,9 +61,15 @@ class User
     @lname = options['lname']
   end
 
-  def create
-    raise "#{self} already in database" if @id
+  def save
+    if @id
+      update
+    else
+      create
+    end
+  end
 
+  def create
     QuestionsDBConnection.instance.execute(<<-SQL, @fname, lname)
       INSERT INTO
         users (fname, lname)
@@ -74,12 +80,49 @@ class User
     @id = QuestionsDBConnection.instance.last_insert_row_id
   end
 
+  def update
+    QuestionsDBConnection.instance.execute(<<-SQL, @fname, @lname, @id)
+      UPDATE
+        users
+      SET
+        fname = ?, lname = ?
+      WHERE
+        id = ?
+    SQL
+  end
+
   def liked_questions
     QuestionLike.liked_questions_for_user_id(@id)
   end
 
   def followed_questions
     QuestionFollow.followed_questions_for_user_id(@id)
+  end
+
+  def average_karma
+    data = QuestionsDBConnection.instance.execute(<<-SQL, @id)
+      -- SELECT
+      --   CAST(COUNT(*) AS FLOAT) / COUNT(distinct questions.id) as average_karma
+      -- FROM
+      --   question_likes
+      -- JOIN
+      --   questions ON questions.id = question_likes.question_id
+      -- WHERE
+      --   questions.user_id = ?
+      SELECT
+        CAST(COUNT(question_likes.id) AS FLOAT) /
+          COUNT(DISTINCT(questions.id)) AS average_karma
+      FROM
+        questions
+      LEFT OUTER JOIN
+        question_likes
+      ON
+        questions.id = question_likes.question_id
+      WHERE
+        questions.user_id = ?
+      SQL
+
+    data.first['average_karma']
   end
 end
 
@@ -127,9 +170,15 @@ class Question
     @user_id = options['user_id']
   end
 
-  def create
-    raise "#{self} already in database" if @id
+  def save
+    if @id
+      update
+    else
+      create
+    end
+  end
 
+  def create
     QuestionsDBConnection.instance.execute(<<-SQL, @title, @body, @user_id)
       INSERT INTO
         questions (title, body, user_id)
@@ -138,6 +187,17 @@ class Question
     SQL
 
     @id = QuestionsDBConnection.instance.last_insert_row_id
+  end
+
+  def update
+    data = QuestionsDBConnection.instance.execute(<<-SQL, @title, @body, @user_id, @id)
+      UPDATE
+        questions
+      SET
+        title = ?, body = ?, user_id = ?
+      WHERE
+        id = ?
+    SQL
   end
 
   def author
@@ -224,6 +284,10 @@ class Reply
     data.map { |datum| Reply.new(datum) }
   end
 
+  def self.most_liked(n)
+    QuestionLike.most_liked_questions(n)
+  end
+
   def initialize(options)
     @id = options['id']
     @body = options['body']
@@ -232,17 +296,34 @@ class Reply
     @parent_id = options['parent_id']
   end
 
-  def create
-    raise "#{self} already in database" if @id
+  def save
+    if @id
+      update
+    else
+      create
+    end
+  end
 
-    QuestionsDBConnection.instance.execute(<<-SQL, @title, @body, @user_id)
+  def create
+    QuestionsDBConnection.instance.execute(<<-SQL, @body, @user_id, @question_id, @parent_id)
       INSERT INTO
-        questions (title, body, user_id)
+        replies (body, user_id, question_id, parent_id)
       VALUES
-        (?, ?, ?)
+        (?, ?, ?, ?)
     SQL
 
     @id = QuestionsDBConnection.instance.last_insert_row_id
+  end
+
+  def update
+    QuestionsDBConnection.instance.execute(<<-SQL, @body, @user_id, @question_id, @parent_id, @id)
+      UPDATE
+        replies
+      SET
+        body = ?, user_id = ?, question_id = ?, parent_id = ?
+      WHERE
+        id = ?
+    SQL
   end
 
   def author
@@ -323,7 +404,7 @@ class QuestionFollow
   def self.most_followed_questions(n)
     data = QuestionsDBConnection.instance.execute(<<-SQL, n)
       SELECT
-        *
+        questions.id, questions.title, questions.user_id, questions.body
       FROM
         questions
       JOIN
@@ -387,13 +468,13 @@ class QuestionLike
       SQL
 
       return nil if data.empty?
-      data.map { |datum| Question.new(datum)}
+      data.map { |datum| Question.new(datum) }
     end
 
     def self.most_liked_questions(n)
       data = QuestionsDBConnection.instance.execute(<<-SQL, n)
         SELECT
-          *
+          questions.id, questions.title, questions.user_id, questions.body
         FROM
           questions
         JOIN
@@ -406,6 +487,6 @@ class QuestionLike
       SQL
 
       return nil if data.empty?
-      data.map { |datum| Question.new(datum)}
+      data.map { |datum| Question.new(datum) }
     end
 end
