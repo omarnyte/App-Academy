@@ -1,5 +1,6 @@
 require 'sqlite3'
 require 'singleton'
+require_relative 'modelbase'
 
 class QuestionsDBConnection < SQLite3::Database
   include Singleton
@@ -128,11 +129,15 @@ end
 
 
 
-class Question
+class Question < ModelBase
   attr_accessor :title, :body, :user_id
-  def self.all
-    data = QuestionsDBConnection.instance.execute("SELECT * FROM questions")
-    data.map { |datum| Question.new(datum)}
+  # def self.all
+  #   data = QuestionsDBConnection.instance.execute("SELECT * FROM questions")
+  #   data.map { |datum| Question.new(datum)}
+  # end
+
+  def self.table
+    "questions"
   end
 
   def self.find_by_id(id)
@@ -211,7 +216,7 @@ class Question
     SQL
 
     return nil if data.empty?
-    return User.new(data.first)
+    User.new(data.first)
   end
 
   def likers
@@ -239,7 +244,7 @@ class Reply
   attr_accessor :question_id, :parent_id, :user_id, :body
   def self.all
     data = QuestionsDBConnection.instance.execute("SELECT * FROM replies")
-    data.map { |datum| Reply.new(datum)}
+    data.map { |datum| Reply.new(datum) }
   end
 
   def self.find_by_id(id)
@@ -337,7 +342,7 @@ class Reply
     SQL
 
     return nil if data.empty?
-    return User.new(data.first)
+    User.new(data.first)
   end
 
   def question
@@ -359,7 +364,7 @@ class Reply
     SQL
 
     return nil if data.empty?
-    data.map {|datum| Reply.new(datum)}
+    data.map { |datum| Reply.new(datum) }
   end
 
 end
@@ -422,71 +427,71 @@ class QuestionFollow
 end
 
 class QuestionLike
-    def self.likers_for_question_id(question_id)
-      data = QuestionsDBConnection.instance.execute(<<-SQL, question_id)
-        SELECT
-          *
-        FROM
-          users
-        JOIN
-          question_likes ON users.id = question_likes.user_id
-        JOIN
-          questions ON questions.id = question_likes.question_id
-        WHERE
-          questions.id = ?
-      SQL
+  def self.likers_for_question_id(question_id)
+    data = QuestionsDBConnection.instance.execute(<<-SQL, question_id)
+      SELECT
+        *
+      FROM
+        users
+      JOIN
+        question_likes ON users.id = question_likes.user_id
+      JOIN
+        questions ON questions.id = question_likes.question_id
+      WHERE
+        questions.id = ?
+    SQL
 
-      return nil if data.empty?
-      data.map { |datum| User.new(datum) }
-    end
+    return nil if data.empty?
+    data.map { |datum| User.new(datum) }
+  end
 
-    def self.num_likes_for_question_id(question_id)
-      data = QuestionsDBConnection.instance.execute(<<-SQL, question_id)
-        SELECT
-          COUNT(*) AS num_likes
-        FROM
-          question_likes
-        WHERE
-          question_id = ?
-      SQL
+  def self.num_likes_for_question_id(question_id)
+    data = QuestionsDBConnection.instance.execute(<<-SQL, question_id)
+      SELECT
+        COUNT(*) AS num_likes
+      FROM
+        question_likes
+      WHERE
+        question_id = ?
+    SQL
 
-      data.first['num_likes']
-    end
+    data.first['num_likes']
+  end
 
-    def self.liked_questions_for_user_id(user_id)
-      data = QuestionsDBConnection.instance.execute(<<-SQL, user_id)
-        SELECT
-          *
-        FROM
-          questions
-        JOIN
-          question_likes ON questions.id = question_likes.question_id
-        JOIN
-          users ON question_likes.user_id = users.id
-        WHERE
-          users.id = ?
-      SQL
+  def self.liked_questions_for_user_id(user_id)
+    data = QuestionsDBConnection.instance.execute(<<-SQL, user_id)
+      SELECT
+        *
+      FROM
+        questions
+      JOIN
+        question_likes ON questions.id = question_likes.question_id
+      JOIN
+        users ON question_likes.user_id = users.id
+      WHERE
+        users.id = ?
+    SQL
 
-      return nil if data.empty?
-      data.map { |datum| Question.new(datum) }
-    end
+    return nil if data.empty?
+    data.map { |datum| Question.new(datum) }
+  end
 
-    def self.most_liked_questions(n)
-      data = QuestionsDBConnection.instance.execute(<<-SQL, n)
-        SELECT
-          questions.id, questions.title, questions.user_id, questions.body
-        FROM
-          questions
-        JOIN
-          question_likes ON questions.id = question_likes.question_id
-        GROUP BY
-          questions.id
-        ORDER BY
-          COUNT(questions.id) DESC
-        LIMIT ?
-      SQL
+  def self.most_liked_questions(n)
+    data = QuestionsDBConnection.instance.execute(<<-SQL, n)
+      SELECT
+        questions.id, questions.title, questions.user_id, questions.body
+      FROM
+        questions
+      JOIN
+        question_likes ON questions.id = question_likes.question_id
+      GROUP BY
+        questions.id
+      ORDER BY
+        COUNT(questions.id) DESC
+      LIMIT ?
+    SQL
 
-      return nil if data.empty?
-      data.map { |datum| Question.new(datum) }
-    end
+    return nil if data.empty?
+    data.map { |datum| Question.new(datum) }
+  end
 end
