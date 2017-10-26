@@ -1,0 +1,27 @@
+.topic-nav {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.topic-nav li {
+  font: $sans-serif;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 10px; 
+}
+
+.topic-nav li:last-of-type {
+  text-transform: uppercase;
+}
+
+.topic-nav li:hover {
+  background: $light-gray;
+}
+
+.topic-nav li:last-of-type:hover {
+  background: white;
+  text-decoration: underline;
+}

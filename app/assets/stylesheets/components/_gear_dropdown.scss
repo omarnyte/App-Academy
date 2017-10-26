@@ -1,0 +1,24 @@
+// Use the gear_dropdown.png screenshot as a style guide
+.gear-dropdown {
+  font-family: $sans-serif;
+  color: $gray;
+}
+
+.gear-dropdown span {
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.gear-dropdown li {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.editions li:hover {
+  padding: 5px;
+}
+
+.editions li:hover {
+  background: $gray;
+  color: black; 
+}
