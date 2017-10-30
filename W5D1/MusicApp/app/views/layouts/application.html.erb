@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MusicApp</title>
+    <%= csrf_meta_tags %>
+
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= javascript_include_tag 'application' %>
+  </head>
+
+  <body>
+    <header>
+      <h1>MusicApp</h1>
+    </header>
+
+
+    <% if current_user.nil? %>
+      <%= button_to 'Sign in', new_session_url %>
+      <%= button_to 'Sign up', new_user_url %>
+    <% else %>
+      <%= current_user.email %>
+      <%= button_to 'Logout', session_url, method: :delete %>
+    <% end %>
+
+
+    <%= yield %>
+  </body>
+</html>
