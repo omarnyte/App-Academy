@@ -32,6 +32,9 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
+  gem 'rails-controller-testing'
+  gem 'bcrypt'
+
   gem 'rspec-rails'
   gem 'factory_bot_rails'
 
@@ -55,6 +58,7 @@ group :test do
   gem 'faker'
   gem 'guard-rspec'
   gem 'launchy'
+  gem 'shoulda-matchers', '~> 3.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
