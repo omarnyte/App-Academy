@@ -1,0 +1,15 @@
+<h2>Create a subcreddit!</h2>
+
+<form action=" <%= subs_url %> " method="post">
+
+  <%= auth_token_input %>
+
+  <label for="">Title
+    <input type="text" name="sub[title]" value="">
+  </label>
+  <label for="">Description
+    <input type="text" name="sub[description]" value="">
+  </label>
+
+  <input type="submit" name="" value="Create Subcreddit">
+</form>
