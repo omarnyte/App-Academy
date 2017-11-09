@@ -68,12 +68,17 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 const FollowToggle = __webpack_require__(1);
+const UsersSearch = __webpack_require__(3);
+
+
 
 $(() => {
   let $buttons = $(".follow-toggle");
-  // debugger
   $buttons.each((idx, el) => new FollowToggle(el));
 
+let $search = $(".users-search");
+
+$search.each((idx, el) => new UsersSearch(el));
 });
 
 
@@ -160,10 +165,49 @@ const APIUtil = {
       },
       error: (error) => console.log(error)
     });
+  },
+
+  searchUsers: (queryVal, success) => {
+    $.ajax({
+      method: 'GET',
+      url: '/users/search',
+      dataType: 'JSON',
+      success: console.log(queryVal),
+      data: `{query: ${queryVal}}`
+    });
   }
 };
 
 module.exports = APIUtil;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const APIUtil = __webpack_require__(2);
+
+class UsersSearch {
+  constructor (el) {
+    this.$el = $(el);
+    this.$input = this.$el.children(".search-bar");
+    this.$ul = this.$el.children(".users");
+    this.$button = this.$el.children(".button");
+    this.handleInput();
+  }
+
+  handleInput () {
+    this.$input.on("input", (event) => {
+      APIUtil.searchUsers(this.$input.val(), () => {
+        console.log("SUCCESS!");
+      });
+    });
+
+
+  }
+
+}
+module.exports = UsersSearch;
 
 
 /***/ })
