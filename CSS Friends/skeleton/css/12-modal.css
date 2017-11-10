@@ -1,0 +1,51 @@
+/* PHASE 12: Modal */
+.modal {
+  display: none;
+}
+
+.modal-screen {
+  position:fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 2;
+}
+
+.modal-form {
+  position: absolute;
+  left: 35%;
+  top: 100px;
+  margin: 0 auto;
+  padding: 15px;
+  width: 350px;
+  background: white;
+  border: 1px solid black;
+  border-radius: 5px;
+  z-index: 3;
+}
+.modal-welcome-container {
+  margin-bottom: 20px;
+}
+
+.modal-welcome {
+  font-size: 35px;
+  font-weight: 300;
+  margin-top: 5px;
+}
+
+.modal-exit {
+  position: relative;
+  bottom: 10px;
+  font-size: 35px;
+  float:right;
+}
+
+.modal-exit:hover {
+  color: red;
+}
+
+.is-open {
+  display: initial;
+}
