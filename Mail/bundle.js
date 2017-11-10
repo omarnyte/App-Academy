@@ -119,6 +119,7 @@ class Router {
     // const name = actRoute.value();
     const p = document.createElement("p");
     p.innerHTML = actRoute;
+    // p.innerHTML = "hello";
 
     this.node.appendChild(p);
   }
