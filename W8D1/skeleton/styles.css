@@ -1,0 +1,12 @@
+nav {
+  display: flex;
+  justify-content: space-between;
+}
+
+.not-complete {
+  color: red;
+}
+
+.complete {
+  color: green; 
+}
