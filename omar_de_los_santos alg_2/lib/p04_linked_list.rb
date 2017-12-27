@@ -11,15 +11,17 @@ class Node
   def to_s
     "#{@key}: #{@val}"
   end
-
-  def remove
-    # optional but useful, connects previous node to next node
-    # and removes self from list.
-  end
 end
 
+
 class LinkedList
+  include Enumerable
+
   def initialize
+    @first = Node.new
+    @last = Node.new
+    @first.next = @last
+    @last.prev = @first
   end
 
   def [](i)
@@ -28,34 +30,75 @@ class LinkedList
   end
 
   def first
-  end
+     empty? ? nil : @first.next
+   end
 
-  def last
-  end
+   def last
+     empty? ? nil : @last.prev
+   end
 
-  def empty?
-  end
+   def empty?
+     @first.next == @last
+   end
 
-  def get(key)
-  end
+   def get(key)
+     each { |node| return node.val if node.key == key }
+     nil
+   end
 
-  def include?(key)
-  end
+   def include?(key)
+     any? { |node| node.key == key }
+   end
 
-  def append(key, val)
-  end
+   def append(key, val)
+     each { |node| return node.val = val if node.key == key }
+
+     new_node = Node.new(key, val)
+
+     @last.prev.next = new_node
+     new_node.prev = @last.prev
+     new_node.next = @last
+     @last.prev = new_node
+
+     new_node
+   end
 
   def update(key, val)
+    each do |node|
+      if node.key == key
+        return node.val = val
+      end
+    end
+
+    # in case node doesn't exist
+    nil
   end
 
   def remove(key)
+    each do |node|
+      if node.key == key
+        node.prev.next = node.next
+        node.next.prev = node.prev
+        node.next, node.prev = nil, nil
+        return node.val
+      end
+    end
+
+    # in case node doesn't exist
+    nil
   end
 
   def each
+   current_node = @first.next
+   until current_node == @last
+     yield current_node
+     current_node = current_node.next
+   end
   end
 
-  # uncomment when you have `each` working and `Enumerable` included
-  # def to_s
-  #   inject([]) { |acc, node| acc << "[#{node.key}, #{node.val}]" }.join(", ")
-  # end
+ def to_s
+   # uncomment when you have `each` working and `Enumerable` included
+   # def to_s
+   inject([]) { |acc, node| acc << "[#{node.key}, #{node.val}]" }.join(", ")
+ end
 end
