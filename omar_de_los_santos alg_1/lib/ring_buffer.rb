@@ -28,8 +28,8 @@ class RingBuffer
   def pop
     raise 'index out of bounds' if @length <= 0
 
-    popped = @store[length - 1]
-    @store[length - 1 ] = nil
+    popped = self[@length - 1]
+    self[@length - 1] = nil
 
     # prevents the length of the array from becoming negative
     if (@length - 1) <= 0
@@ -45,8 +45,8 @@ class RingBuffer
   def push(val)
     resize! if length >= capacity
 
-    @store[@length] = val
     @length += 1
+    self[length - 1] = val
   end
 
   # O(1) ammortized
