@@ -51,8 +51,6 @@ class LinkedList
    end
 
    def append(key, val)
-     each { |node| return node.val = val if node.key == key }
-
      new_node = Node.new(key, val)
 
      @last.prev.next = new_node
