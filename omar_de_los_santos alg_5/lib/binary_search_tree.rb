@@ -20,6 +20,16 @@ class BinarySearchTree
   end
 
   def find(value, tree_node = @root)
+    # base case: the node does not exist in the tree
+    return nil if tree_node.nil?
+
+    if value == tree_node.value
+      return tree_node
+    elsif value < tree_node.value
+      find(value, tree_node.left)
+    else
+      find(value, tree_node.right)
+    end
   end
 
   def delete(value)
@@ -48,7 +58,7 @@ class BinarySearchTree
     if value < node.value
       node.left = BinarySearchTree.insert(value, node.left)
     else
-      node.right = BinarySearchTree.class.insert(value, node.right)
+      node.right = BinarySearchTree.insert(value, node.right)
     end
 
     node
