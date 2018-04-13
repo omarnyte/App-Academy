@@ -1,0 +1,33 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #d2d2d2;
+}
+
+H1 {
+  font-size: 38px;
+}
+
+H2 {
+  font-size: 32px;
+}
+
+.ingredients-list {
+  list-style: georgian inside;
+}
+
+ol {
+  list-style: armenian;
+}
+
+header > img {
+  width: 100px
+}
+
+ul > li > a {
+  text-decoration: none;
+}
+
+.user_review h4 {
+  font-size: 18px;
+  font-weight: bold;
+}
