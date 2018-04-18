@@ -1,0 +1,19 @@
+<h2>Subcreddit: <%= @sub.title %> </h2>
+
+<h3>Moderated by: <%= @sub.moderator.username %> </h3>
+
+<h3>About <%= @sub.title %> : </h3>
+<p> <%= @sub.description %> </p>
+
+<%= link_to 'Post to this Sub', new_sub_post_url(@sub.id) %>
+<%= link_to 'Edit Sub', edit_sub_url %>
+<%= link_to 'Back to All Subs', subs_url %>
+
+<ul>
+  <% @sub.posts.try(:each) do |post| %>
+    <h3> <%= post.title %> </h3>
+    <p> <%= "By: #{post.author.username}" %> </p>
+    <%= post.url if post.url %>
+    <p> <%= post.content %> </p>
+  <% end %>
+</ul>

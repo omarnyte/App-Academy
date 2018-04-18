@@ -1,0 +1,28 @@
+<!-- <h1>Posts#new</h1>
+<p>Find me in app/views/posts/new.html.erb</p> -->
+
+<h2>Post a post!</h2>
+<form action=" <%= sub_posts_url %> " method="post">
+
+  <%= auth_token_input %>
+
+  <label for="">Title
+    <input type="text" name="post[title]" value="">
+  </label>
+  <label for="">URL
+    <input type="text" name="post[url]" value="">
+  </label>
+  <label for="">Content
+    <input type="text_body" name="post[content]" value="">
+  </label>
+
+  <p>Subs to Post To</p>
+  <% Sub.all.each do |subcreddit| %>
+    <label for="">
+      <input type="checkbox" name="post[sub_ids][]" value="<%= subcreddit.id %>">
+    </label><%= subcreddit.title %>
+    <br>
+  <% end %>
+
+  <input type="submit" name="" value="Post">
+</form>

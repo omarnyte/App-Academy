@@ -1,0 +1,7 @@
+<h2>Check out our awesome subs!</h2>
+
+<ul>
+  <% @subs.try(:each) do |subcrredit| %>
+    <li> <%= link_to subcrredit.title, sub_url(subcrredit) %> </li>
+  <% end %>
+</ul>
